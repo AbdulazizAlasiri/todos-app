@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todoey_flutter/utlity/todo.dart';
+import 'package:todoey_flutter/screens/add_task_screen.dart';
 
 class TodosScreen extends StatefulWidget {
   @override
@@ -21,7 +22,16 @@ class _TodosScreenState extends State<TodosScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              builder: (context) => SingleChildScrollView(
+                  child: Container(
+                      padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(context).viewInsets.bottom),
+                      child: AddTaskScreen())));
+        },
         child: Icon(Icons.add),
       ),
       backgroundColor: Colors.lightBlue,
