@@ -13,7 +13,9 @@ class Todo extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(text),
+            Text(text,
+                style: TextStyle(
+                    decoration: TextDecoration.lineThrough, fontSize: 20)),
             Checkbox(
               value: checked,
               onChanged: onChanged,
