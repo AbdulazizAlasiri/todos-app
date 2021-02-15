@@ -1,8 +1,32 @@
 import 'package:flutter/material.dart';
 
-class AddTaskScreen extends StatelessWidget {
+class AddTaskScreen extends StatefulWidget {
+  final Function addTaskCallback;
+  AddTaskScreen({@required this.addTaskCallback});
+
+  @override
+  _AddTaskScreenState createState() => _AddTaskScreenState();
+}
+
+class _AddTaskScreenState extends State<AddTaskScreen> {
+  String newTask;
+
   @override
   Widget build(BuildContext context) {
+    FlatButton addButton = FlatButton(
+      minWidth: 200,
+      shape:
+          RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+      onPressed: () {
+        widget.addTaskCallback(newTask);
+        Navigator.pop(context);
+      },
+      child: Text(
+        'Add',
+        style: TextStyle(fontSize: 40, color: Colors.white),
+      ),
+      color: Colors.lightBlueAccent,
+    );
     return Container(
       color: Colors.black54,
       child: Container(
@@ -33,21 +57,19 @@ class AddTaskScreen extends StatelessWidget {
                   fontWeight: FontWeight.w400),
             ),
             TextField(
+              onChanged: (value) {
+                setState(() {
+                  newTask = value;
+                });
+              },
               autofocus: true,
               textAlign: TextAlign.center,
+              onEditingComplete: () {
+                addButton.onPressed();
+              },
             ),
             SizedBox(height: 80),
-            FlatButton(
-              minWidth: 200,
-              shape: RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(30.0)),
-              onPressed: () {},
-              child: Text(
-                'Add',
-                style: TextStyle(fontSize: 40, color: Colors.white),
-              ),
-              color: Colors.lightBlueAccent,
-            )
+            addButton
           ],
         ),
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todoey_flutter/utlity/todo.dart';
 import 'package:todoey_flutter/screens/add_task_screen.dart';
+import 'package:todoey_flutter/modules/todo.dart';
 
 class TodosScreen extends StatefulWidget {
   @override
@@ -8,15 +9,38 @@ class TodosScreen extends StatefulWidget {
 }
 
 class _TodosScreenState extends State<TodosScreen> {
-  List<Map> todos = [
-    {'text': 'ergergewrgwerg', 'checked': false},
-    {'text': 'ergergewrgwerg', 'checked': false},
-    {'text': 'ergergewrgwerg', 'checked': false},
-    {'text': 'ergergewrgwerg', 'checked': false},
-    {'text': 'ergergewrgwerg', 'checked': false},
-    {'text': 'ergergewrgwerg', 'checked': false},
-    {'text': 'ergergewrgwerg', 'checked': false},
-  ];
+  List<TodoClass> todos;
+
+  @override
+  void initState() {
+    super.initState();
+    todos = [
+      TodoClass('erkgjergjer[g1'),
+      TodoClass('erkgjergjer[g2'),
+      TodoClass('erkgjergjer[g4'),
+      TodoClass('erkgjergjer[g3'),
+      TodoClass('erkgjergjer[g', isDone: true),
+      TodoClass('erkgjergjer[g', isDone: false),
+      TodoClass('erkgjergjer[g', isDone: true),
+      TodoClass('erkgjergjer[g'),
+    ];
+    todos.sort((TodoClass a, TodoClass b) {
+      if (!(a.isDone() ^ b.isDone())) {
+        return a.getTitle().compareTo(b.getTitle());
+      } else {
+        if (a.isDone())
+          return 1;
+        else
+          return -1;
+      }
+    });
+  }
+
+  void addTask(String text) {
+    setState(() {
+      todos.insert(0, TodoClass(text));
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,13 +48,16 @@ class _TodosScreenState extends State<TodosScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              builder: (context) => SingleChildScrollView(
-                  child: Container(
-                      padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).viewInsets.bottom),
-                      child: AddTaskScreen())));
+            context: context,
+            isScrollControlled: true,
+            builder: (context) => SingleChildScrollView(
+              child: Container(
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom),
+                child: AddTaskScreen(addTaskCallback: addTask),
+              ),
+            ),
+          );
         },
         child: Icon(Icons.add),
       ),
@@ -70,7 +97,7 @@ class _TodosScreenState extends State<TodosScreen> {
                         fontWeight: FontWeight.w700),
                   ),
                   Text(
-                    '12 Tasks',
+                    '${todos.length} Tasks',
                     style: TextStyle(
                       fontSize: 20,
                       color: Colors.white,
@@ -105,11 +132,26 @@ class _TodosScreenState extends State<TodosScreen> {
                         // Show a snackbar. This snackbar could also contain "Undo" actions.
                         Scaffold.of(context).showSnackBar(SnackBar(
                             content:
-                                Text("${todos[index]['text']} dismissed")));
+                                Text("${todos[index].getTitle()} dismissed")));
                       },
                       child: Todo(
-                        text: todos[index]['text'],
-                        checked: todos[index]['checked'],
+                        text: todos[index].getTitle(),
+                        checked: todos[index].isDone(),
+                        onChanged: (value) {
+                          setState(() {
+                            todos[index].toggleCompleation();
+                            todos.sort((TodoClass a, TodoClass b) {
+                              if (!(a.isDone() ^ b.isDone())) {
+                                return a.getTitle().compareTo(b.getTitle());
+                              } else {
+                                if (a.isDone())
+                                  return 1;
+                                else
+                                  return -1;
+                              }
+                            });
+                          });
+                        },
                       ),
                     ),
                     itemCount: todos.length,
